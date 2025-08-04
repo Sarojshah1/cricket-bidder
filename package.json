@@ -1,0 +1,22 @@
+{
+  "name": "cricket-bidder",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.12.4",
+    "prettier": "^3.1.1",
+    "turbo": "^1.12.4"
+  },
+  "packageManager": "pnpm@8.15.4",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+} 
