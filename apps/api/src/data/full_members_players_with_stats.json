@@ -1,0 +1,373 @@
+[
+  {
+    "name": "Rohit Sharma",
+    "age": 38,
+    "nationality": "India",
+    "role": "BATTER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 10000000,
+    "stats": {"matches": 254, "runs": 6531, "wickets": 0, "strikeRate": 130.1, "economy": null, "battingAverage": 31.9, "bowlingAverage": null}
+  },
+  {
+    "name": "Jasprit Bumrah",
+    "age": 31,
+    "nationality": "India",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 10000000,
+    "stats": {"matches": 125, "runs": 110, "wickets": 145, "strikeRate": 84.0, "economy": 7.3, "battingAverage": 8.5, "bowlingAverage": 21.2}
+  },
+  {
+    "name": "Hardik Pandya",
+    "age": 32,
+    "nationality": "India",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm medium-fast",
+    "basePrice": 10000000,
+    "stats": {"matches": 125, "runs": 2300, "wickets": 53, "strikeRate": 142.4, "economy": 8.5, "battingAverage": 28.0, "bowlingAverage": 31.8}
+  },
+
+  {
+    "name": "Jos Buttler",
+    "age": 35,
+    "nationality": "England",
+    "role": "WICKETKEEPER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm medium",
+    "basePrice": 10000000,
+    "stats": {"matches": 100, "runs": 2600, "wickets": 0, "strikeRate": 144.0, "economy": null, "battingAverage": 37.1, "bowlingAverage": null}
+  },
+  {
+    "name": "Jofra Archer",
+    "age": 30,
+    "nationality": "England",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 5000000,
+    "stats": {"matches": 50, "runs": 150, "wickets": 65, "strikeRate": 120.0, "economy": 7.9, "battingAverage": 12.5, "bowlingAverage": 22.5}
+  },
+  {
+    "name": "Ben Stokes",
+    "age": 34,
+    "nationality": "England",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Right-arm fast-medium",
+    "basePrice": 10000000,
+    "stats": {"matches": 85, "runs": 1800, "wickets": 38, "strikeRate": 138.0, "economy": 8.7, "battingAverage": 27.7, "bowlingAverage": 32.1}
+  },
+
+  {
+    "name": "Kagiso Rabada",
+    "age": 30,
+    "nationality": "South Africa",
+    "role": "BOWLER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 10000000,
+    "stats": {"matches": 60, "runs": 120, "wickets": 98, "strikeRate": 96.0, "economy": 8.1, "battingAverage": 9.2, "bowlingAverage": 20.5}
+  },
+  {
+    "name": "Aiden Markram",
+    "age": 31,
+    "nationality": "South Africa",
+    "role": "BATTER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 5000000,
+    "stats": {"matches": 50, "runs": 1450, "wickets": 8, "strikeRate": 133.0, "economy": 7.2, "battingAverage": 32.5, "bowlingAverage": 35.2}
+  },
+  {
+    "name": "Marco Jansen",
+    "age": 25,
+    "nationality": "South Africa",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Left-arm fast-medium",
+    "basePrice": 5000000,
+    "stats": {"matches": 30, "runs": 250, "wickets": 38, "strikeRate": 128.0, "economy": 8.4, "battingAverage": 18.0, "bowlingAverage": 27.8}
+  },
+
+  {
+    "name": "Pat Cummins",
+    "age": 32,
+    "nationality": "Australia",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 10000000,
+    "stats": {"matches": 60, "runs": 240, "wickets": 65, "strikeRate": 140.0, "economy": 8.3, "battingAverage": 14.1, "bowlingAverage": 24.2}
+  },
+  {
+    "name": "Travis Head",
+    "age": 31,
+    "nationality": "Australia",
+    "role": "BATTER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 10000000,
+    "stats": {"matches": 60, "runs": 1700, "wickets": 4, "strikeRate": 147.0, "economy": 7.6, "battingAverage": 33.0, "bowlingAverage": 38.0}
+  },
+  {
+    "name": "Glenn Maxwell",
+    "age": 36,
+    "nationality": "Australia",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 10000000,
+    "stats": {"matches": 100, "runs": 2300, "wickets": 40, "strikeRate": 154.0, "economy": 8.2, "battingAverage": 28.4, "bowlingAverage": 31.0}
+  },
+
+  {
+    "name": "Kane Williamson",
+    "age": 35,
+    "nationality": "New Zealand",
+    "role": "BATTER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 5000000,
+    "stats": {"matches": 89, "runs": 2460, "wickets": 6, "strikeRate": 122.0, "economy": 7.1, "battingAverage": 33.8, "bowlingAverage": 35.0}
+  },
+  {
+    "name": "Trent Boult",
+    "age": 36,
+    "nationality": "New Zealand",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Left-arm fast-medium",
+    "basePrice": 10000000,
+    "stats": {"matches": 60, "runs": 90, "wickets": 74, "strikeRate": 80.0, "economy": 7.4, "battingAverage": 7.5, "bowlingAverage": 22.8}
+  },
+  {
+    "name": "Daryl Mitchell",
+    "age": 34,
+    "nationality": "New Zealand",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm medium",
+    "basePrice": 5000000,
+    "stats": {"matches": 50, "runs": 1200, "wickets": 12, "strikeRate": 134.0, "economy": 8.0, "battingAverage": 29.3, "bowlingAverage": 30.6}
+  },
+
+  {
+    "name": "Babar Azam",
+    "age": 30,
+    "nationality": "Pakistan",
+    "role": "BATTER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 10000000,
+    "stats": {"matches": 107, "runs": 3698, "wickets": 0, "strikeRate": 129.4, "economy": null, "battingAverage": 41.6, "bowlingAverage": null}
+  },
+  {
+    "name": "Shaheen Afridi",
+    "age": 25,
+    "nationality": "Pakistan",
+    "role": "BOWLER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Left-arm fast",
+    "basePrice": 10000000,
+    "stats": {"matches": 64, "runs": 120, "wickets": 88, "strikeRate": 88.0, "economy": 7.6, "battingAverage": 10.9, "bowlingAverage": 22.1}
+  },
+  {
+    "name": "Shadab Khan",
+    "age": 26,
+    "nationality": "Pakistan",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Legbreak googly",
+    "basePrice": 5000000,
+    "stats": {"matches": 92, "runs": 1400, "wickets": 104, "strikeRate": 136.0, "economy": 7.2, "battingAverage": 25.0, "bowlingAverage": 22.6}
+  },
+
+  {
+    "name": "Kusal Mendis",
+    "age": 30,
+    "nationality": "Sri Lanka",
+    "role": "WICKETKEEPER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm medium",
+    "basePrice": 2000000,
+    "stats": {"matches": 70, "runs": 1800, "wickets": 0, "strikeRate": 132.0, "economy": null, "battingAverage": 27.7, "bowlingAverage": null}
+  },
+  {
+    "name": "Wanindu Hasaranga",
+    "age": 28,
+    "nationality": "Sri Lanka",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Legbreak googly",
+    "basePrice": 10000000,
+    "stats": {"matches": 70, "runs": 1100, "wickets": 104, "strikeRate": 138.0, "economy": 7.3, "battingAverage": 23.4, "bowlingAverage": 15.8}
+  },
+  {
+    "name": "Matheesha Pathirana",
+    "age": 22,
+    "nationality": "Sri Lanka",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 5000000,
+    "stats": {"matches": 25, "runs": 40, "wickets": 32, "strikeRate": 90.0, "economy": 8.9, "battingAverage": 6.0, "bowlingAverage": 24.0}
+  },
+
+  {
+    "name": "Shakib Al Hasan",
+    "age": 38,
+    "nationality": "Bangladesh",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Left-arm orthodox",
+    "basePrice": 5000000,
+    "stats": {"matches": 117, "runs": 2382, "wickets": 146, "strikeRate": 122.0, "economy": 6.8, "battingAverage": 23.8, "bowlingAverage": 20.5}
+  },
+  {
+    "name": "Taskin Ahmed",
+    "age": 30,
+    "nationality": "Bangladesh",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 2000000,
+    "stats": {"matches": 50, "runs": 90, "wickets": 62, "strikeRate": 96.0, "economy": 8.2, "battingAverage": 6.5, "bowlingAverage": 25.5}
+  },
+  {
+    "name": "Litton Das",
+    "age": 30,
+    "nationality": "Bangladesh",
+    "role": "WICKETKEEPER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm medium",
+    "basePrice": 2000000,
+    "stats": {"matches": 75, "runs": 1600, "wickets": 0, "strikeRate": 125.0, "economy": null, "battingAverage": 22.9, "bowlingAverage": null}
+  },
+
+  {
+    "name": "Rashid Khan",
+    "age": 26,
+    "nationality": "Afghanistan",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Legbreak googly",
+    "basePrice": 10000000,
+    "stats": {"matches": 92, "runs": 650, "wickets": 130, "strikeRate": 140.0, "economy": 6.4, "battingAverage": 15.8, "bowlingAverage": 14.5}
+  },
+  {
+    "name": "Rahmanullah Gurbaz",
+    "age": 23,
+    "nationality": "Afghanistan",
+    "role": "WICKETKEEPER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm medium",
+    "basePrice": 5000000,
+    "stats": {"matches": 55, "runs": 1450, "wickets": 0, "strikeRate": 136.0, "economy": null, "battingAverage": 26.8, "bowlingAverage": null}
+  },
+  {
+    "name": "Mohammad Nabi",
+    "age": 40,
+    "nationality": "Afghanistan",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 2000000,
+    "stats": {"matches": 120, "runs": 1700, "wickets": 90, "strikeRate": 138.0, "economy": 7.2, "battingAverage": 22.0, "bowlingAverage": 26.4}
+  },
+
+  {
+    "name": "Nicholas Pooran",
+    "age": 29,
+    "nationality": "West Indies",
+    "role": "WICKETKEEPER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 10000000,
+    "stats": {"matches": 88, "runs": 1950, "wickets": 0, "strikeRate": 146.0, "economy": null, "battingAverage": 26.0, "bowlingAverage": null}
+  },
+  {
+    "name": "Alzarri Joseph",
+    "age": 28,
+    "nationality": "West Indies",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 5000000,
+    "stats": {"matches": 45, "runs": 120, "wickets": 58, "strikeRate": 92.0, "economy": 8.5, "battingAverage": 10.0, "bowlingAverage": 24.7}
+  },
+  {
+    "name": "Andre Russell",
+    "age": 37,
+    "nationality": "West Indies",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 10000000,
+    "stats": {"matches": 70, "runs": 1900, "wickets": 45, "strikeRate": 168.0, "economy": 9.1, "battingAverage": 28.8, "bowlingAverage": 27.4}
+  },
+
+  {
+    "name": "Paul Stirling",
+    "age": 35,
+    "nationality": "Ireland",
+    "role": "BATTER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 2000000,
+    "stats": {"matches": 134, "runs": 3400, "wickets": 20, "strikeRate": 143.0, "economy": 7.9, "battingAverage": 27.4, "bowlingAverage": 24.0}
+  },
+  {
+    "name": "Joshua Little",
+    "age": 25,
+    "nationality": "Ireland",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Left-arm fast",
+    "basePrice": 2000000,
+    "stats": {"matches": 65, "runs": 90, "wickets": 92, "strikeRate": 110.0, "economy": 7.7, "battingAverage": 7.0, "bowlingAverage": 21.3}
+  },
+  {
+    "name": "Harry Tector",
+    "age": 25,
+    "nationality": "Ireland",
+    "role": "BATTER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 2000000,
+    "stats": {"matches": 45, "runs": 1100, "wickets": 2, "strikeRate": 124.0, "economy": 8.1, "battingAverage": 26.0, "bowlingAverage": 40.0}
+  },
+
+  {
+    "name": "Sikandar Raza",
+    "age": 39,
+    "nationality": "Zimbabwe",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm offbreak",
+    "basePrice": 2000000,
+    "stats": {"matches": 80, "runs": 1500, "wickets": 60, "strikeRate": 136.0, "economy": 7.4, "battingAverage": 25.8, "bowlingAverage": 23.9}
+  },
+  {
+    "name": "Blessing Muzarabani",
+    "age": 28,
+    "nationality": "Zimbabwe",
+    "role": "BOWLER",
+    "battingStyle": "Right-hand bat",
+    "bowlingStyle": "Right-arm fast",
+    "basePrice": 2000000,
+    "stats": {"matches": 45, "runs": 70, "wickets": 52, "strikeRate": 90.0, "economy": 7.9, "battingAverage": 7.0, "bowlingAverage": 25.5}
+  },
+  {
+    "name": "Sean Williams",
+    "age": 38,
+    "nationality": "Zimbabwe",
+    "role": "ALL-ROUNDER",
+    "battingStyle": "Left-hand bat",
+    "bowlingStyle": "Left-arm orthodox",
+    "basePrice": 2000000,
+    "stats": {"matches": 68, "runs": 1700, "wickets": 48, "strikeRate": 129.0, "economy": 7.2, "battingAverage": 28.3, "bowlingAverage": 24.1}
+  }
+]

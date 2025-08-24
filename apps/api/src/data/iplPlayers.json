@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Virat Kohli",
+    "age": 35,
+    "nationality": "Indian",
+    "role": "batsman",
+    "battingStyle": "right-handed",
+    "bowlingStyle": null,
+    "basePrice": 2000000,
+    "stats": { "matches": 237, "runs": 8000, "average": 38.5 }
+  },
+  {
+    "name": "Rohit Sharma",
+    "age": 37,
+    "nationality": "Indian",
+    "role": "batsman",
+    "battingStyle": "right-handed",
+    "bowlingStyle": null,
+    "basePrice": 1800000,
+    "stats": { "matches": 243, "runs": 6500, "average": 31.3 }
+  },
+  {
+    "name": "Jasprit Bumrah",
+    "age": 31,
+    "nationality": "Indian",
+    "role": "bowler",
+    "battingStyle": "right-handed",
+    "bowlingStyle": "fast",
+    "basePrice": 1500000,
+    "stats": { "matches": 120, "wickets": 150, "economy": 7.5 }
+  }
+]

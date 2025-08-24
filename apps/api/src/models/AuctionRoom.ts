@@ -135,7 +135,18 @@ const auctionRoomSchema = new Schema<IAuctionRoom>({
     default: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Virtual relation: per-auction player state lives in AuctionPlayer, not in Player
+// Allows reusing the same global Player pool across multiple auctions
+auctionRoomSchema.virtual('auctionPlayers', {
+  ref: 'AuctionPlayer',
+  localField: '_id',
+  foreignField: 'auctionRoomId',
+  justOne: false
 });
 
 // Index for efficient queries

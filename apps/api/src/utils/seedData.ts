@@ -1,6 +1,7 @@
 import { User } from '../models/User';
 import { Team } from '../models/Team';
 import { Player } from '../models/Player';
+import { AuctionPlayer } from '../models/AuctionPlayer';
 import { AuctionRoom } from '../models/AuctionRoom';
 import bcrypt from 'bcryptjs';
 
@@ -199,6 +200,22 @@ export const seedData = async () => {
       },
       { upsert: true, new: true }
     );
+
+    // Initialize per-auction player states so this room has its own pricing/sold flags
+    for (const p of players) {
+      await AuctionPlayer.findOneAndUpdate(
+        { auctionRoomId: auctionRoom._id, playerId: p._id },
+        {
+          auctionRoomId: auctionRoom._id,
+          playerId: p._id,
+          basePrice: p.basePrice,
+          currentPrice: p.basePrice,
+          isSold: false,
+          isActive: true,
+        },
+        { upsert: true, new: true }
+      );
+    }
 
     console.log('✅ Database seeded successfully!');
     console.log(`👥 Created ${teamOwners.length} team owners`);

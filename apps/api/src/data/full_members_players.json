@@ -1,0 +1,49 @@
+[
+  {"name":"Rohit Sharma","age":38,"nationality":"India","role":"BATTER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":10000000,"stats":{}},
+  {"name":"Jasprit Bumrah","age":31,"nationality":"India","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":10000000,"stats":{}},
+  {"name":"Hardik Pandya","age":32,"nationality":"India","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm medium-fast","basePrice":10000000,"stats":{}},
+
+  {"name":"Jos Buttler","age":35,"nationality":"England","role":"WICKETKEEPER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm medium","basePrice":10000000,"stats":{}},
+  {"name":"Jofra Archer","age":30,"nationality":"England","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":5000000,"stats":{}},
+  {"name":"Ben Stokes","age":34,"nationality":"England","role":"ALL-ROUNDER","battingStyle":"Left-hand bat","bowlingStyle":"Right-arm fast-medium","basePrice":10000000,"stats":{}},
+
+  {"name":"Kagiso Rabada","age":30,"nationality":"South Africa","role":"BOWLER","battingStyle":"Left-hand bat","bowlingStyle":"Right-arm fast","basePrice":10000000,"stats":{}},
+  {"name":"Aiden Markram","age":31,"nationality":"South Africa","role":"BATTER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":5000000,"stats":{}},
+  {"name":"Marco Jansen","age":25,"nationality":"South Africa","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Left-arm fast-medium","basePrice":5000000,"stats":{}},
+
+  {"name":"Pat Cummins","age":32,"nationality":"Australia","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":10000000,"stats":{}},
+  {"name":"Travis Head","age":31,"nationality":"Australia","role":"BATTER","battingStyle":"Left-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":10000000,"stats":{}},
+  {"name":"Glenn Maxwell","age":36,"nationality":"Australia","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":10000000,"stats":{}},
+
+  {"name":"Kane Williamson","age":35,"nationality":"New Zealand","role":"BATTER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":5000000,"stats":{}},
+  {"name":"Trent Boult","age":36,"nationality":"New Zealand","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Left-arm fast-medium","basePrice":10000000,"stats":{}},
+  {"name":"Daryl Mitchell","age":34,"nationality":"New Zealand","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm medium","basePrice":5000000,"stats":{}},
+
+  {"name":"Babar Azam","age":30,"nationality":"Pakistan","role":"BATTER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":10000000,"stats":{}},
+  {"name":"Shaheen Afridi","age":25,"nationality":"Pakistan","role":"BOWLER","battingStyle":"Left-hand bat","bowlingStyle":"Left-arm fast","basePrice":10000000,"stats":{}},
+  {"name":"Shadab Khan","age":26,"nationality":"Pakistan","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Legbreak googly","basePrice":5000000,"stats":{}},
+
+  {"name":"Kusal Mendis","age":30,"nationality":"Sri Lanka","role":"WICKETKEEPER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm medium","basePrice":2000000,"stats":{}},
+  {"name":"Wanindu Hasaranga","age":28,"nationality":"Sri Lanka","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Legbreak googly","basePrice":10000000,"stats":{}},
+  {"name":"Matheesha Pathirana","age":22,"nationality":"Sri Lanka","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":5000000,"stats":{}},
+
+  {"name":"Shakib Al Hasan","age":38,"nationality":"Bangladesh","role":"ALL-ROUNDER","battingStyle":"Left-hand bat","bowlingStyle":"Left-arm orthodox","basePrice":5000000,"stats":{}},
+  {"name":"Taskin Ahmed","age":30,"nationality":"Bangladesh","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":2000000,"stats":{}},
+  {"name":"Litton Das","age":30,"nationality":"Bangladesh","role":"WICKETKEEPER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm medium","basePrice":2000000,"stats":{}},
+
+  {"name":"Rashid Khan","age":26,"nationality":"Afghanistan","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Legbreak googly","basePrice":10000000,"stats":{}},
+  {"name":"Rahmanullah Gurbaz","age":23,"nationality":"Afghanistan","role":"WICKETKEEPER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm medium","basePrice":5000000,"stats":{}},
+  {"name":"Mohammad Nabi","age":40,"nationality":"Afghanistan","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":2000000,"stats":{}},
+
+  {"name":"Nicholas Pooran","age":29,"nationality":"West Indies","role":"WICKETKEEPER","battingStyle":"Left-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":10000000,"stats":{}},
+  {"name":"Alzarri Joseph","age":28,"nationality":"West Indies","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":5000000,"stats":{}},
+  {"name":"Andre Russell","age":37,"nationality":"West Indies","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":10000000,"stats":{}},
+
+  {"name":"Paul Stirling","age":35,"nationality":"Ireland","role":"BATTER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":2000000,"stats":{}},
+  {"name":"Joshua Little","age":25,"nationality":"Ireland","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Left-arm fast","basePrice":2000000,"stats":{}},
+  {"name":"Harry Tector","age":25,"nationality":"Ireland","role":"BATTER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":2000000,"stats":{}},
+
+  {"name":"Sikandar Raza","age":39,"nationality":"Zimbabwe","role":"ALL-ROUNDER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm offbreak","basePrice":2000000,"stats":{}},
+  {"name":"Blessing Muzarabani","age":28,"nationality":"Zimbabwe","role":"BOWLER","battingStyle":"Right-hand bat","bowlingStyle":"Right-arm fast","basePrice":2000000,"stats":{}},
+  {"name":"Sean Williams","age":38,"nationality":"Zimbabwe","role":"ALL-ROUNDER","battingStyle":"Left-hand bat","bowlingStyle":"Left-arm orthodox","basePrice":2000000,"stats":{}}
+]

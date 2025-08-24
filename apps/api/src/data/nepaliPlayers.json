@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Sandeep Lamichhane",
+    "age": 24,
+    "nationality": "Nepalese",
+    "role": "bowler",
+    "battingStyle": "right-handed",
+    "bowlingStyle": "leg-spin",
+    "basePrice": 300000,
+    "stats": { "matches": 75, "wickets": 110, "economy": 6.9 }
+  },
+  {
+    "name": "Paras Khadka",
+    "age": 36,
+    "nationality": "Nepalese",
+    "role": "all-rounder",
+    "battingStyle": "right-handed",
+    "bowlingStyle": "medium",
+    "basePrice": 200000,
+    "stats": { "matches": 100, "runs": 2500, "wickets": 45, "average": 32.0 }
+  },
+  {
+    "name": "Gyanendra Malla",
+    "age": 34,
+    "nationality": "Nepalese",
+    "role": "batsman",
+    "battingStyle": "right-handed",
+    "bowlingStyle": null,
+    "basePrice": 150000,
+    "stats": { "matches": 85, "runs": 1800, "average": 28.5 }
+  },
+  {
+    "name": "Rohit Paudel",
+    "age": 21,
+    "nationality": "Nepalese",
+    "role": "batsman",
+    "battingStyle": "right-handed",
+    "bowlingStyle": null,
+    "basePrice": 160000,
+    "stats": { "matches": 60, "runs": 1400, "average": 31.2 }
+  },
+  {
+    "name": "Sompal Kami",
+    "age": 28,
+    "nationality": "Nepalese",
+    "role": "bowler",
+    "battingStyle": "right-handed",
+    "bowlingStyle": "fast",
+    "basePrice": 180000,
+    "stats": { "matches": 95, "wickets": 120, "economy": 7.6, "runs": 700 }
+  },
+  {
+    "name": "Karan KC",
+    "age": 28,
+    "nationality": "Nepalese",
+    "role": "bowler",
+    "battingStyle": "right-handed",
+    "bowlingStyle": "fast",
+    "basePrice": 170000,
+    "stats": { "matches": 80, "wickets": 95, "economy": 7.9, "runs": 500 }
+  },
+  {
+    "name": "Dipendra Singh Airee",
+    "age": 24,
+    "nationality": "Nepalese",
+    "role": "all-rounder",
+    "battingStyle": "right-handed",
+    "bowlingStyle": "off-spin",
+    "basePrice": 190000,
+    "stats": { "matches": 90, "runs": 2000, "wickets": 60 }
+  },
+  {
+    "name": "Kushal Bhurtel",
+    "age": 27,
+    "nationality": "Nepalese",
+    "role": "batsman",
+    "battingStyle": "right-handed",
+    "bowlingStyle": null,
+    "basePrice": 140000,
+    "stats": { "matches": 50, "runs": 1200, "average": 29.0 }
+  },
+  {
+    "name": "Aasif Sheikh",
+    "age": 23,
+    "nationality": "Nepalese",
+    "role": "wicket-keeper",
+    "battingStyle": "right-handed",
+    "bowlingStyle": null,
+    "basePrice": 150000,
+    "stats": { "matches": 55, "runs": 1100, "stumpings": 25, "catches": 60 }
+  },
+  {
+    "name": "Lalit Rajbanshi",
+    "age": 25,
+    "nationality": "Nepalese",
+    "role": "bowler",
+    "battingStyle": "left-handed",
+    "bowlingStyle": "spin",
+    "basePrice": 130000,
+    "stats": { "matches": 45, "wickets": 60, "economy": 6.8 }
+  }
+]

@@ -35,7 +35,7 @@ export class SocketService {
   constructor(server: HTTPServer) {
     this.io = new SocketIOServer(server, {
       cors: {
-        origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
         methods: ["GET", "POST"]
       }
     });
@@ -53,7 +53,8 @@ export class SocketService {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
-        const user = await User.findById(decoded.userId).select('username role teamId');
+        const user = await User.findById(decoded.userId)
+          .select('_id username role teamId') as import('../models/User').IUser | null;
         
         if (!user) {
           return next(new Error('User not found'));
@@ -78,13 +79,40 @@ export class SocketService {
       const user = (socket as any).user as AuthenticatedSocket;
       console.log(`User ${user.username} connected`);
 
+      // Chat message event
+      socket.on('chat-message', async (data: { roomId: string; message: string }) => {
+        try {
+          const { roomId, message } = data;
+          if (!roomId || !message) return;
+          // Save message to DB
+          const chatMsg = await (await import('../models/ChatMessage')).ChatMessage.create({
+            roomId,
+            senderId: user.userId,
+            senderName: user.username,
+            message,
+            createdAt: new Date()
+          });
+          // Broadcast to room
+          this.io.to(roomId).emit('chat-message', {
+            _id: chatMsg._id,
+            roomId,
+            senderId: user.userId,
+            senderName: user.username,
+            message,
+            createdAt: chatMsg.createdAt
+          });
+        } catch (error) {
+          socket.emit('error', { message: 'Failed to send chat message' });
+        }
+      });
+
       // Join auction room
       socket.on('join-room', async (data: JoinRoomData) => {
         try {
           const room = await AuctionRoom.findById(data.roomId)
             .populate('teams', 'name owner')
             .populate('currentPlayer', 'name role basePrice stats')
-            .populate('players', 'name role basePrice stats');
+            .populate('players', 'name role basePrice stats') as import("../models/AuctionRoom").IAuctionRoom;
 
           if (!room) {
             socket.emit('error', { message: 'Room not found' });
@@ -134,7 +162,9 @@ export class SocketService {
           }
 
           // Validate bid amount
-          const currentBid = room.currentBid?.amount || room.players.find(p => p.toString() === data.playerId)?.basePrice || 100000;
+          // Avoid reading basePrice from room.players as they may be ObjectIds (unpopulated)
+          const playerForBid = await Player.findById(data.playerId).select('basePrice');
+          const currentBid = room.currentBid?.amount ?? playerForBid?.basePrice ?? 100000;
           if (data.amount <= currentBid) {
             socket.emit('error', { message: 'Bid must be higher than current bid' });
             return;
@@ -273,7 +303,7 @@ export class SocketService {
 
   private async endBiddingForPlayer(roomId: string) {
     try {
-      const room = await AuctionRoom.findById(roomId);
+      const room = await AuctionRoom.findById(roomId) as import("../models/AuctionRoom").IAuctionRoom;
       if (!room || room.status !== 'active') return;
 
       // Award player to highest bidder
@@ -301,13 +331,16 @@ export class SocketService {
 
       if (nextPlayerIndex < room.players.length) {
         room.currentPlayer = room.players[nextPlayerIndex];
+        // Cache sold info before clearing bid to avoid TypeScript narrowing issues
+        const lastSoldTo = room.currentBid?.teamId;
+        const lastSoldPrice = room.currentBid?.amount;
         room.currentBid = undefined;
         await room.save();
 
         this.io.to(roomId).emit('player-sold', {
           playerId: room.players[currentPlayerIndex],
-          soldTo: room.currentBid?.teamId,
-          soldPrice: room.currentBid?.amount,
+          soldTo: lastSoldTo,
+          soldPrice: lastSoldPrice,
           nextPlayer: room.players[nextPlayerIndex]
         });
 
@@ -341,24 +374,31 @@ export class SocketService {
       const teamComparisons = [];
 
       for (const team of room.teams) {
-        const teamData = await Team.findById(team._id).populate('players');
+        // Populate players as Player[] for correct typing
+        const teamData = await Team.findById(team._id).populate({ path: 'players', model: 'Player' });
         if (!teamData) continue;
 
+        // Defensive: ensure teamData.players is an array of Player docs
+        const players: typeof teamData.players = Array.isArray(teamData.players) ? teamData.players : [];
+
         // Calculate team scores
-        const scores = this.calculateTeamScores(teamData);
-        
+        const scores = this.calculateTeamScores({ ...teamData.toObject(), players });
+
+        // Map players for TeamComparison model
+        const mappedPlayers = players.map((player: any) => ({
+          playerId: player._id,
+          purchasePrice: typeof player.soldPrice === 'number' ? player.soldPrice : 0,
+          playerStats: player.stats || {}
+        }));
+
         const comparison = new TeamComparison({
           auctionRoomId: roomId,
           teamId: team._id,
           totalSpent: 10000000 - teamData.remainingBudget,
           remainingBudget: teamData.remainingBudget,
-          players: teamData.players.map(player => ({
-            playerId: player._id,
-            purchasePrice: player.soldPrice || 0,
-            playerStats: player.stats
-          })),
+          players: mappedPlayers,
           teamScore: scores,
-          teamComposition: this.calculateTeamComposition(teamData.players),
+          teamComposition: this.calculateTeamComposition(players),
           ranking: 0
         });
 
@@ -446,4 +486,4 @@ export class SocketService {
   public getIO() {
     return this.io;
   }
-} 
+}

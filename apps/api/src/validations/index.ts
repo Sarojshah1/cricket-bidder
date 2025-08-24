@@ -14,4 +14,5 @@ export * from './teamValidation';
 export * from './auctionRoomValidation';
 
 // Bid validations
-export * from './bidValidation'; 
+export * from './bidValidation';
+// export * from './bidValidation';
