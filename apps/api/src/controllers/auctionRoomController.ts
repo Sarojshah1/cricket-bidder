@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { AuctionRoom } from '../models/AuctionRoom';
+import { getSocketServiceInstance } from '../services/socketService';
 import { Team } from '../models/Team';
+import { User } from '../models/User';
 import { Player } from '../models/Player';
 import { TeamComparison } from '../models/TeamComparison';
 import { createError } from '../middleware/errorHandler';
@@ -27,6 +29,10 @@ export const createAuctionRoom = async (req: Request, res: Response, next: NextF
       });
     }
 
+    // Load all active players to prefill the room
+    const allPlayers = await Player.find({ isActive: true }).select('_id');
+    const playerIds = allPlayers.map(p => p._id);
+
     const auctionRoom = new AuctionRoom({
       name,
       description,
@@ -35,7 +41,7 @@ export const createAuctionRoom = async (req: Request, res: Response, next: NextF
       minBidIncrement: minBidIncrement || 50000,
       timePerBid: timePerBid || 30,
       status: 'waiting',
-      players: [],
+      players: playerIds,
       teams: []
     });
 
@@ -44,6 +50,82 @@ export const createAuctionRoom = async (req: Request, res: Response, next: NextF
     res.status(201).json({
       success: true,
       data: { auctionRoom }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Join auction room as the current user (user becomes a team entry)
+export const joinAuctionRoom = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { roomId } = req.params;
+    const userId = req.user?.userId as any;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: { message: 'Authentication required' }
+      });
+    }
+
+    const auctionRoom = await AuctionRoom.findById(roomId);
+    if (!auctionRoom) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Auction room not found' }
+      });
+    }
+
+    if (auctionRoom.status === 'cancelled' || auctionRoom.status === 'completed') {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Cannot join a cancelled or completed auction' }
+      });
+    }
+
+    // Ensure a Team exists for this user; create if needed
+    const user = await User.findById(userId).select('username');
+    const username = user?.username || 'User';
+    let team = await Team.findOne({ owner: userId });
+    if (!team) {
+      // If username is taken due to unique constraint, append suffix
+      let name = username;
+      const exists = await Team.findOne({ name });
+      if (exists) {
+        name = `${username}-${String(userId).slice(-4)}`;
+      }
+      team = await Team.create({
+        name,
+        owner: userId,
+        budget: 1000000000, // 100 cr
+        remainingBudget: 1000000000,
+        players: []
+      });
+    }
+
+    const teamId = String(team._id);
+    const alreadyJoined = auctionRoom.teams.some(t => t.toString() === teamId);
+    if (!alreadyJoined) {
+      if (auctionRoom.teams.length >= auctionRoom.maxTeams) {
+        return res.status(400).json({
+          success: false,
+          error: { message: `Maximum ${auctionRoom.maxTeams} teams already joined` }
+        });
+      }
+      auctionRoom.teams.push(team._id as any);
+      await auctionRoom.save();
+    }
+
+    const populated = await AuctionRoom.findById(auctionRoom._id)
+      .populate('teams', 'name owner budget remainingBudget')
+      .populate('currentPlayer', 'name role basePrice stats')
+      .populate('players', 'name role basePrice stats isSold soldTo soldPrice')
+      .populate('winner', 'name');
+
+    res.json({
+      success: true,
+      data: { auctionRoom: populated }
     });
   } catch (error) {
     next(error);
@@ -61,7 +143,7 @@ export const getAuctionRooms = async (req: Request, res: Response, next: NextFun
     }
 
     const auctionRooms = await AuctionRoom.find(query)
-      .populate('teams', 'name owner')
+      .populate('teams', 'name owner budget remainingBudget')
       .populate('currentPlayer', 'name role basePrice')
       .sort({ createdAt: -1 })
       .limit(Number(limit))
@@ -92,8 +174,8 @@ export const getAuctionRoom = async (req: Request, res: Response, next: NextFunc
     const { id } = req.params;
 
     const auctionRoom = await AuctionRoom.findById(id)
-      .populate('teams', 'name owner remainingBudget')
-      .populate('currentPlayer', 'name role basePrice stats')
+      .populate('teams', 'name owner budget remainingBudget')
+      .populate('currentPlayer', 'name role basePrice currentPrice stats age nationality battingStyle bowlingStyle imageUrl isSold soldTo soldPrice')
       .populate('players', 'name role basePrice stats isSold soldTo soldPrice')
       .populate('winner', 'name');
 
@@ -253,11 +335,29 @@ export const startAuction = async (req: Request, res: Response, next: NextFuncti
       });
     }
 
+    // Ensure at least 2 participants. If only one team has joined and admin wants to start,
+    // auto-add the admin's team as a participant so admin can also play.
     if (auctionRoom.teams.length < 2) {
-      return res.status(400).json({
-        success: false,
-        error: { message: 'At least 2 teams required to start auction' }
-      });
+      const adminId = req.user?.userId as any;
+      if (req.user?.role === 'admin' && adminId) {
+        let adminTeam = await Team.findOne({ owner: adminId }).select('_id name');
+        if (!adminTeam) {
+          const adminUser = await User.findById(adminId).select('username');
+          const baseName = adminUser?.username || 'Admin';
+          let name = baseName as string;
+          const taken = await Team.findOne({ name });
+          if (taken) name = `${baseName}-${String(adminId).slice(-4)}`;
+          adminTeam = await Team.create({ name, owner: adminId, budget: 1000000000, remainingBudget: 1000000000, players: [] });
+        }
+        const already = auctionRoom.teams.some(t => t.toString() === String(adminTeam!._id));
+        if (!already) auctionRoom.teams.push(adminTeam._id as any);
+      }
+      if (auctionRoom.teams.length < 2) {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'At least 2 participants required (admin counts if joined)' }
+        });
+      }
     }
 
     if (auctionRoom.players.length === 0) {
@@ -270,6 +370,13 @@ export const startAuction = async (req: Request, res: Response, next: NextFuncti
     auctionRoom.status = 'active';
     auctionRoom.currentPlayer = auctionRoom.players[0];
     await auctionRoom.save();
+
+    // Also notify via socket and start timer when started via REST
+    const sock = getSocketServiceInstance();
+    if (sock) {
+      // Fire and forget; no need to await
+      sock.startAuctionFlow(String(auctionRoom._id));
+    }
 
     res.json({
       success: true,

@@ -8,7 +8,8 @@ import {
   startAuction,
   getTeamRankings,
   getBidHistory,
-  cancelAuctionRoom
+  cancelAuctionRoom,
+  joinAuctionRoom
 } from '../controllers/auctionRoomController';
 import { authMiddleware, requireRole } from '../middleware/auth';
 import {
@@ -39,6 +40,9 @@ router.post('/:roomId/players', addPlayersToRoomValidation, authMiddleware, requ
 
 // Start auction (Admin only)
 router.post('/:roomId/start', startAuctionValidation, authMiddleware, requireRole(['admin']), startAuction);
+
+// Join auction room (any authenticated user)
+router.post('/:roomId/join', auctionRoomIdValidation, authMiddleware, joinAuctionRoom);
 
 // Get team rankings for auction room
 router.get('/:roomId/rankings', auctionRoomIdValidation, getTeamRankings);

@@ -26,7 +26,7 @@ export default function AppNavbar() {
           </Link>
           <div className="hidden md:flex items-center gap-2">
             <Link href="/" className={linkClass('/')}>Home</Link>
-            <Link href="/auction-room" className={linkClass('/auction-room')}>Auction Room</Link>
+            <Link href="/auction-rooms" className={linkClass('/auction-rooms')}>Auction Rooms</Link>
             <Link href="/players-list" className={linkClass('/players-list')}>Players List</Link>
             <Link href="/login">
               <Button size="sm" className="bg-trophy-gold text-black font-semibold shadow hover:opacity-90">Login</Button>

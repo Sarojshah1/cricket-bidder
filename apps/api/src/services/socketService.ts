@@ -1,10 +1,9 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import { AuctionRoom } from '../models/AuctionRoom';
-import { TeamComparison } from '../models/TeamComparison';
-import { Team } from '../models/Team';
 import { Player } from '../models/Player';
 import { User } from '../models/User';
+import { Team } from '../models/Team';
 import jwt from 'jsonwebtoken';
 
 interface AuthenticatedSocket {
@@ -28,6 +27,7 @@ export class SocketService {
   private io: SocketIOServer;
   private activeRooms: Map<string, {
     timer: NodeJS.Timeout;
+    countdownInterval: NodeJS.Timeout;
     currentPlayer: string;
     timeLeft: number;
   }> = new Map();
@@ -52,7 +52,11 @@ export class SocketService {
           return next(new Error('Authentication error'));
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+          return next(new Error('Server misconfiguration'));
+        }
+        const decoded = jwt.verify(token, secret) as any;
         const user = await User.findById(decoded.userId)
           .select('_id username role teamId') as import('../models/User').IUser | null;
         
@@ -98,6 +102,7 @@ export class SocketService {
             roomId,
             senderId: user.userId,
             senderName: user.username,
+            username: user.username,
             message,
             createdAt: chatMsg.createdAt
           });
@@ -109,8 +114,11 @@ export class SocketService {
       // Join auction room
       socket.on('join-room', async (data: JoinRoomData) => {
         try {
+          if (!data?.roomId) {
+            socket.emit('error', { message: 'roomId is required' });
+            return;
+          }
           const room = await AuctionRoom.findById(data.roomId)
-            .populate('teams', 'name owner')
             .populate('currentPlayer', 'name role basePrice stats')
             .populate('players', 'name role basePrice stats') as import("../models/AuctionRoom").IAuctionRoom;
 
@@ -118,19 +126,13 @@ export class SocketService {
             socket.emit('error', { message: 'Room not found' });
             return;
           }
-
-          // Check if user's team is in the room
-          if (user.teamId && !room.teams.some(team => team._id.toString() === user.teamId)) {
-            socket.emit('error', { message: 'Your team is not in this auction room' });
-            return;
-          }
-
+          // Allow socket to join for read-only even if not yet a member; REST join controls membership
           socket.join(data.roomId);
           socket.emit('room-joined', {
             room,
             user: {
               userId: user.userId,
-              teamId: user.teamId,
+              teamId: undefined,
               username: user.username,
               role: user.role
             }
@@ -139,7 +141,7 @@ export class SocketService {
           // Notify others in the room
           socket.to(data.roomId).emit('user-joined', {
             username: user.username,
-            teamId: user.teamId
+            teamId: user.userId
           });
 
         } catch (error) {
@@ -150,14 +152,19 @@ export class SocketService {
       // Place bid
       socket.on('place-bid', async (data: BidData) => {
         try {
-          const room = await AuctionRoom.findById(data.roomId);
+          if (!data?.roomId || !data?.playerId || typeof data?.amount !== 'number') {
+            socket.emit('error', { message: 'Invalid bid payload' });
+            return;
+          }
+          const room = await AuctionRoom.findById(data.roomId) as import("../models/AuctionRoom").IAuctionRoom | null;
           if (!room || room.status !== 'active') {
             socket.emit('error', { message: 'Auction not active' });
             return;
           }
-
-          if (!user.teamId) {
-            socket.emit('error', { message: 'You must be a team owner to bid' });
+          // Resolve the bidder's Team in this room (owner = user.userId, team _id within room.teams)
+          const team = await Team.findOne({ _id: { $in: room.teams as any }, owner: user.userId }).select('_id name');
+          if (!team) {
+            socket.emit('error', { message: 'You must join this room to bid' });
             return;
           }
 
@@ -175,40 +182,53 @@ export class SocketService {
             return;
           }
 
-          // Check team budget
-          const team = await Team.findById(user.teamId);
-          if (!team || team.remainingBudget < data.amount) {
-            socket.emit('error', { message: 'Insufficient budget' });
+          // Ensure bidding is for the current player in this room
+          if (!room.currentPlayer || room.currentPlayer.toString() !== data.playerId) {
+            socket.emit('error', { message: 'You can only bid on the current active player' });
             return;
           }
 
-          // Update current bid
-          room.currentBid = {
-            amount: data.amount,
-            teamId: user.teamId as any,
-            bidderId: user.userId as any,
-            timestamp: new Date()
-          };
+          // Optimistic concurrency control: use version match (__v)
+          const version = (room as any).__v as number | undefined;
+          const update = await AuctionRoom.findOneAndUpdate(
+            { _id: room._id, __v: version },
+            {
+              $set: {
+                currentBid: {
+                  amount: data.amount,
+                  teamId: team._id as any,
+                  bidderId: user.userId as any,
+                  timestamp: new Date()
+                }
+              },
+              $inc: { __v: 1 },
+              $push: {
+                bidHistory: {
+                  playerId: data.playerId as any,
+                  amount: data.amount,
+                  teamId: team._id as any,
+                  bidderId: user.userId as any,
+                  timestamp: new Date()
+                }
+              }
+            },
+            { new: true }
+          );
 
-          // Add to bid history
-          room.bidHistory.push({
-            playerId: data.playerId as any,
-            amount: data.amount,
-            teamId: user.teamId as any,
-            bidderId: user.userId as any,
-            timestamp: new Date()
-          });
-
-          await room.save();
+          if (!update) {
+            socket.emit('error', { message: 'Bid rejected due to a concurrent update. Try again.' });
+            return;
+          }
 
           // Reset timer
           this.resetBidTimer(data.roomId, room.timePerBid);
 
-          // Broadcast new bid to all users in the room
+          // Broadcast new bid to all users in the room (include roomId)
           this.io.to(data.roomId).emit('new-bid', {
+            roomId: data.roomId,
             playerId: data.playerId,
             amount: data.amount,
-            teamId: user.teamId,
+            teamId: String(team._id),
             bidderName: user.username,
             timestamp: new Date()
           });
@@ -232,13 +252,48 @@ export class SocketService {
             return;
           }
 
+          if (room.status !== 'waiting') {
+            socket.emit('error', { message: 'Auction is not in waiting status' });
+            return;
+          }
+
+          // Ensure at least 2 participants. If only one team has joined and admin wants to start,
+          // auto-add the admin's team as a participant so admin can also play.
+          if (!Array.isArray(room.teams)) {
+            room.teams = [] as any;
+          }
+          if (room.teams.length < 2) {
+            // find or create admin team
+            let adminTeam = await Team.findOne({ owner: user.userId }).select('_id name');
+            if (!adminTeam) {
+              const baseName = user.username || 'Admin';
+              let name = baseName;
+              const taken = await Team.findOne({ name });
+              if (taken) name = `${baseName}-${String(user.userId).slice(-4)}`;
+              adminTeam = await Team.create({ name, owner: user.userId, budget: 1000000000, remainingBudget: 1000000000, players: [] });
+            }
+            const already = room.teams.some(t => t.toString() === String(adminTeam!._id));
+            if (!already) room.teams.push(adminTeam._id as any);
+            if (room.teams.length < 2) {
+              socket.emit('error', { message: 'At least 2 participants required (admin counts if joined)' });
+              return;
+            }
+          }
+
+          if (!Array.isArray(room.players) || room.players.length === 0) {
+            socket.emit('error', { message: 'No players available to start the auction' });
+            return;
+          }
+
           room.status = 'active';
           room.currentPlayer = room.players[0];
+          await room.populate('currentPlayer', 'name role basePrice stats');
           await room.save();
 
           this.io.to(data.roomId).emit('auction-started', {
+            roomId: data.roomId,
             room,
-            currentPlayer: room.players[0]
+            currentPlayer: room.currentPlayer
           });
 
           // Start bid timer for first player
@@ -261,30 +316,30 @@ export class SocketService {
     const existing = this.activeRooms.get(roomId);
     if (existing) {
       clearTimeout(existing.timer);
+      clearInterval(existing.countdownInterval);
     }
 
     const timer = setTimeout(async () => {
       await this.endBiddingForPlayer(roomId);
     }, duration * 1000);
 
-    this.activeRooms.set(roomId, {
-      timer,
-      currentPlayer: '',
-      timeLeft: duration
-    });
-
-    // Send countdown updates
     const countdownInterval = setInterval(() => {
       const room = this.activeRooms.get(roomId);
       if (room) {
         room.timeLeft--;
         this.io.to(roomId).emit('bid-timer', { timeLeft: room.timeLeft });
-        
         if (room.timeLeft <= 0) {
-          clearInterval(countdownInterval);
+          clearInterval(room.countdownInterval);
         }
       }
     }, 1000);
+
+    this.activeRooms.set(roomId, {
+      timer,
+      countdownInterval,
+      currentPlayer: '',
+      timeLeft: duration
+    });
   }
 
   private resetBidTimer(roomId: string, duration: number) {
@@ -314,20 +369,21 @@ export class SocketService {
           player.soldTo = room.currentBid.teamId;
           player.soldPrice = room.currentBid.amount;
           await player.save();
-
-          // Update team budget
-          const team = await Team.findById(room.currentBid.teamId);
-          if (team) {
-            team.remainingBudget -= room.currentBid.amount;
-            team.players.push(room.currentPlayer!);
-            await team.save();
-          }
         }
       }
 
       // Move to next player
       const currentPlayerIndex = room.players.findIndex(p => p.toString() === room.currentPlayer?.toString());
       const nextPlayerIndex = currentPlayerIndex + 1;
+
+      if (currentPlayerIndex === -1) {
+        // If current player is not set correctly, move to the first player
+        room.currentPlayer = room.players[0];
+        room.currentBid = undefined;
+        await room.save();
+        this.startBidTimer(roomId, room.timePerBid);
+        return;
+      }
 
       if (nextPlayerIndex < room.players.length) {
         room.currentPlayer = room.players[nextPlayerIndex];
@@ -338,10 +394,11 @@ export class SocketService {
         await room.save();
 
         this.io.to(roomId).emit('player-sold', {
-          playerId: room.players[currentPlayerIndex],
+          roomId,
+          prevPlayerId: room.players[currentPlayerIndex],
           soldTo: lastSoldTo,
           soldPrice: lastSoldPrice,
-          nextPlayer: room.players[nextPlayerIndex]
+          nextPlayerId: room.players[nextPlayerIndex]
         });
 
         // Start timer for next player
@@ -359,6 +416,9 @@ export class SocketService {
 
         // Calculate team rankings
         await this.calculateTeamRankings(roomId);
+
+        // Clear timers and cleanup
+        this.clearRoomTimers(roomId);
       }
 
     } catch (error) {
@@ -368,67 +428,24 @@ export class SocketService {
 
   private async calculateTeamRankings(roomId: string) {
     try {
-      const room = await AuctionRoom.findById(roomId).populate('teams');
+      const room = await AuctionRoom.findById(roomId);
       if (!room) return;
 
-      const teamComparisons = [];
+      // Users-as-teams: emit a simple ranking based on join order for now.
+      const rankings = (room.teams || []).map((userId: any, idx: number) => ({
+        teamId: userId,
+        ranking: idx + 1,
+        totalScore: 0,
+        totalSpent: 0,
+        remainingBudget: 0
+      }));
 
-      for (const team of room.teams) {
-        // Populate players as Player[] for correct typing
-        const teamData = await Team.findById(team._id).populate({ path: 'players', model: 'Player' });
-        if (!teamData) continue;
-
-        // Defensive: ensure teamData.players is an array of Player docs
-        const players: typeof teamData.players = Array.isArray(teamData.players) ? teamData.players : [];
-
-        // Calculate team scores
-        const scores = this.calculateTeamScores({ ...teamData.toObject(), players });
-
-        // Map players for TeamComparison model
-        const mappedPlayers = players.map((player: any) => ({
-          playerId: player._id,
-          purchasePrice: typeof player.soldPrice === 'number' ? player.soldPrice : 0,
-          playerStats: player.stats || {}
-        }));
-
-        const comparison = new TeamComparison({
-          auctionRoomId: roomId,
-          teamId: team._id,
-          totalSpent: 10000000 - teamData.remainingBudget,
-          remainingBudget: teamData.remainingBudget,
-          players: mappedPlayers,
-          teamScore: scores,
-          teamComposition: this.calculateTeamComposition(players),
-          ranking: 0
-        });
-
-        await comparison.save();
-        teamComparisons.push(comparison);
-      }
-
-      // Sort by total score and assign rankings
-      teamComparisons.sort((a, b) => b.teamScore.totalScore - a.teamScore.totalScore);
-      
-      for (let i = 0; i < teamComparisons.length; i++) {
-        teamComparisons[i].ranking = i + 1;
-        await teamComparisons[i].save();
-      }
-
-      // Determine winner
-      const winner = teamComparisons[0];
-      room.winner = winner.teamId;
+      room.winner = rankings[0]?.teamId;
       await room.save();
 
-      // Broadcast rankings
       this.io.to(roomId).emit('team-rankings', {
-        rankings: teamComparisons.map(tc => ({
-          teamId: tc.teamId,
-          ranking: tc.ranking,
-          totalScore: tc.teamScore.totalScore,
-          totalSpent: tc.totalSpent,
-          remainingBudget: tc.remainingBudget
-        })),
-        winner: winner.teamId
+        rankings,
+        winner: room.winner
       });
 
     } catch (error) {
@@ -486,4 +503,39 @@ export class SocketService {
   public getIO() {
     return this.io;
   }
+
+  // Public method to start auction flow when initiated via REST
+  public async startAuctionFlow(roomId: string) {
+    try {
+      const room = await AuctionRoom.findById(roomId)
+        .populate('currentPlayer', 'name role basePrice stats') as any;
+      if (!room) return;
+      // Broadcast start and kick off timer
+      this.io.to(roomId).emit('auction-started', {
+        room,
+        currentPlayer: room.currentPlayer
+      });
+      this.startBidTimer(roomId, room.timePerBid);
+    } catch (error) {
+      console.error('Failed to start auction flow via REST:', error);
+    }
+  }
+
+  private clearRoomTimers(roomId: string) {
+    const existing = this.activeRooms.get(roomId);
+    if (existing) {
+      clearTimeout(existing.timer);
+      clearInterval(existing.countdownInterval);
+      this.activeRooms.delete(roomId);
+    }
+  }
+}
+
+// Singleton accessors to use SocketService from controllers (REST)
+let socketServiceInstance: SocketService | null = null;
+export function setSocketServiceInstance(inst: SocketService) {
+  socketServiceInstance = inst;
+}
+export function getSocketServiceInstance(): SocketService | null {
+  return socketServiceInstance;
 }

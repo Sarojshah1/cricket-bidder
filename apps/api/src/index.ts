@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { connectDB } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
-import { SocketService } from './services/socketService';
+import { SocketService, setSocketServiceInstance } from './services/socketService';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import playerRoutes from './routes/players';
@@ -21,8 +21,19 @@ const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 5001;
 
+// Validate required env variables
+const requiredEnvs = ['MONGODB_URI', 'JWT_SECRET'];
+const missing = requiredEnvs.filter((k) => !process.env[k]);
+if (missing.length) {
+  // Fail fast on misconfiguration
+  // eslint-disable-next-line no-console
+  console.error(`Missing required environment variables: ${missing.join(', ')}`);
+  process.exit(1);
+}
+
 // Initialize Socket.IO service
 const socketService = new SocketService(server);
+setSocketServiceInstance(socketService);
 
 // Middleware
 app.use(helmet());
